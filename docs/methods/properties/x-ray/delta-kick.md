@@ -3,7 +3,7 @@
 This tutorial shows how to run a Real-Time Time-Dependent DFT calculation using the so-called δ-kick
 approach to compute absorption electronic spectra.
 
-We warmly recommend having a look first at the Linear-Response approach, for instance at
+We recommend having a look first at the Linear-Response approach, for instance at
 [the X-Ray frequencies](./tddft). See also this article and the supplementary information: LINK
 
 This tutorial is structured as follows:
