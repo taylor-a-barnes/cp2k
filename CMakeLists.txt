@@ -834,6 +834,11 @@ if(CP2K_USE_MPI)
           "    - libraries : ${CP2K_SCALAPACK_LINK_LIBRARIES}\n\n")
 endif()
 
+if(CP2K_USE_MDI)
+  message("  - MDI:\n"
+          "    - libraries : ${CP2K_MDI_LINK_LIBRARIES}\n\n")
+endif()
+
 if((CP2K_USE_ACCEL MATCHES "CUDA") OR (CP2K_USE_ACCEL MATCHES "HIP"))
 
   message("  - Hardware Acceleration:\n")

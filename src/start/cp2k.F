@@ -62,13 +62,13 @@ PROGRAM cp2k
                                               compiler_version
    USE kinds,                           ONLY: default_path_length
    USE machine,                         ONLY: default_output_unit
-   USE mdi_engine,                      ONLY: init_mdi
+   USE mdi_engine,                      ONLY: init_mdi, mdi_options
 #include "../base/base_uses.f90"
 
    IMPLICIT NONE
 
    CHARACTER(LEN=default_path_length)   :: input_file_name, output_file_name, &
-                                           arg_att, command, mdi_options
+                                           arg_att, command
    CHARACTER(LEN=default_path_length), &
       DIMENSION(:, :), ALLOCATABLE      :: initial_variables, initial_variables_tmp
    CHARACTER(LEN=:), ALLOCATABLE        :: compiler_options_string

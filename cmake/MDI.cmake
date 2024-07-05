@@ -26,6 +26,14 @@ set(MDI_BINARY_DIR "${BINARY_DIR}/MDI_Library")
 # workaround for older CMake versions
 file(MAKE_DIRECTORY ${MDI_BINARY_DIR})
 
+# check if found
+#    get_target_property(
+#      CP2K_SCALAPACK_LINK_LIBRARIES cp2k::BLAS::SCI::scalapack_link
+#      INTERFACE_LINK_LIBRARIES)
+#find_package_handle_standard_args(MDI
+#                                  REQUIRED_VARS CP2K_MDI_LINK_LIBRARIES)
+set(CP2K_MDI_LINK_LIBRARIES "${MDI_BINARY_DIR}/libmdi.a")
+
 # add target to link against
 if(NOT TARGET cp2k::MDI::mdi)
   add_library(cp2k::MDI::mdi INTERFACE IMPORTED)
@@ -39,6 +47,6 @@ set_target_properties(cp2k::MDI::mdi PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${MDI_BINARY_DIR}
   )
 
-#target_link_libraries(cp2k PUBLIC mdi-lib)
-#set_property(TARGET cp2k::mdi::mdi-lib
-#             PROPERTY INTERFACE_LINK_LIBRARIES)
+set_property(TARGET cp2k::MDI::mdi
+             PROPERTY INTERFACE_LINK_LIBRARIES ${CP2K_MDI_LINK_LIBRARIES})
+mark_as_advanced(CP2K_MDI_LINK_LIBRARIES)

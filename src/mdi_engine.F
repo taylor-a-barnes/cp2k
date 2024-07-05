@@ -13,10 +13,9 @@
 ! **************************************************************************************************
 MODULE mdi_engine
 
-   USE kinds,                           ONLY: default_path_length,&
-                                              default_string_length
+   USE kinds,                           ONLY: default_path_length
    USE machine,                         ONLY: default_output_unit
-   USE string_utilities,                ONLY: integer_to_string
+   USE mdi,                             ONLY: MDI_Init
 
    IMPLICIT NONE
    PRIVATE
@@ -24,6 +23,7 @@ MODULE mdi_engine
    PUBLIC :: init_mdi
 
    LOGICAL, PUBLIC :: use_mdi
+   CHARACTER(LEN=default_path_length), PUBLIC :: mdi_options
 
 CONTAINS
 
@@ -32,8 +32,17 @@ CONTAINS
 !> \param ...
 ! **************************************************************************************************
    SUBROUTINE init_mdi()
+      INTEGER :: ierr
 
       WRITE (default_output_unit, *) "AAA INITIALIZING MDI"      
+
+      CALL MDI_Init(mdi_options, ierr)
+      IF ( ierr .NE. 0 ) THEN
+         WRITE (default_output_unit, "(/,T2,A)") &
+            "ERROR: MDI_Init returned a non-zero error code"
+      END IF
+
+      WRITE (default_output_unit, *) "BBB INITIALIZING MDI"    
 
    END SUBROUTINE init_mdi
 
