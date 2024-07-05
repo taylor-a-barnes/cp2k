@@ -12,7 +12,7 @@ ExternalProject_Add(mdi_build
   -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
   -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
   -Dlanguage=Fortran
-  -Dlibtype=STATIC
+  -Dlibtype=SHARED
   -Dmpi=OFF
   -Dpython_plugins=OFF
   UPDATE_COMMAND ""
@@ -32,7 +32,7 @@ file(MAKE_DIRECTORY ${MDI_BINARY_DIR})
 #      INTERFACE_LINK_LIBRARIES)
 #find_package_handle_standard_args(MDI
 #                                  REQUIRED_VARS CP2K_MDI_LINK_LIBRARIES)
-set(CP2K_MDI_LINK_LIBRARIES "${MDI_BINARY_DIR}/libmdi.a")
+set(CP2K_MDI_LINK_LIBRARIES "${MDI_BINARY_DIR}/libmdi.so")
 
 # add target to link against
 if(NOT TARGET cp2k::MDI::mdi)
