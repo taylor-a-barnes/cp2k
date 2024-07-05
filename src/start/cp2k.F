@@ -62,19 +62,20 @@ PROGRAM cp2k
                                               compiler_version
    USE kinds,                           ONLY: default_path_length
    USE machine,                         ONLY: default_output_unit
+   USE mdi_engine,                      ONLY: init_mdi
 #include "../base/base_uses.f90"
 
    IMPLICIT NONE
 
    CHARACTER(LEN=default_path_length)   :: input_file_name, output_file_name, &
-                                           arg_att, command
+                                           arg_att, command, mdi_options
    CHARACTER(LEN=default_path_length), &
       DIMENSION(:, :), ALLOCATABLE      :: initial_variables, initial_variables_tmp
    CHARACTER(LEN=:), ALLOCATABLE        :: compiler_options_string
    INTEGER                              :: output_unit, l, i, var_set_sep, inp_var_idx
    INTEGER                              :: ierr, i_arg
    LOGICAL                              :: check, usage, echo_input, command_line_error
-   LOGICAL                              :: run_it, force_run, has_input, xml, print_version, print_license, shell_mode
+   LOGICAL                              :: run_it, force_run, has_input, xml, print_version, print_license, shell_mode, use_mdi
    TYPE(section_type), POINTER          :: input_declaration
 
    NULLIFY (input_declaration)
@@ -90,6 +91,7 @@ PROGRAM cp2k
    run_it = .TRUE.
    shell_mode = .FALSE.
    force_run = .FALSE.
+   use_mdi = .FALSE.
    print_version = .FALSE.
    print_license = .FALSE.
    command_line_error = .FALSE.
@@ -256,6 +258,12 @@ PROGRAM cp2k
       CASE ("--xml")
          xml = .TRUE.
          run_it = .FALSE.
+      CASE ("--mdi")
+         use_mdi = .TRUE.
+         i_arg = i_arg + 1
+         CALL GET_COMMAND_ARGUMENT(i_arg, arg_att, status=ierr)
+         CPASSERT(ierr == 0)
+         mdi_options = arg_att
       CASE DEFAULT
          ! if the last argument does not start with a - it is an input filename
          !MK in order to digest the additional flags of mpirun
@@ -369,6 +377,10 @@ PROGRAM cp2k
                   WRITE (output_unit, "(A)") "         Please, check and correct it"
                END IF
             END IF
+         END IF
+
+         IF (use_mdi) THEN
+            CALL init_mdi()
          END IF
 
          IF (shell_mode) THEN
