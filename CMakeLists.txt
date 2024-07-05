@@ -113,6 +113,7 @@ option(CP2K_USE_SUPERLU "Enable superlu support" OFF)
 option(CP2K_USE_COSMA "COSMA is a drop in replacement of scalapack dgemm" OFF)
 option(CP2K_USE_LIBINT2 "Enable libint2 support" OFF)
 option(CP2K_USE_PLUMED "Enable plumed2 support" OFF)
+option(CP2K_USE_MDI "Enable MDI support" OFF)
 option(CP2K_USE_VORI "Enable libvori support" OFF)
 option(CP2K_USE_PEXSI "Enable pexsi support" OFF)
 option(CP2K_USE_QUIP "Enable quip support" OFF)
@@ -760,6 +761,10 @@ if(CP2K_USE_MPI_F08 AND NOT MPI_Fortran_HAVE_F08_MODULE)
   )
 endif()
 
+if(CP2K_USE_MDI)
+  include(MDI)
+endif()
+
 # OPTION HANDLING
 
 # make sure that the default build type is RELEASE
@@ -990,6 +995,10 @@ endif()
 
 if(NOT CP2K_USE_PLUMMED)
   message("   - PLUMED")
+endif()
+
+if(NOT CP2K_USE_MDI)
+  message("   - MDI")
 endif()
 
 if(NOT CP2K_USE_QUIP)

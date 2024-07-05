@@ -1572,6 +1572,7 @@ target_link_libraries(
     $<$<BOOL:${CP2K_USE_DFTD4}>:dftd4::dftd4>
     $<$<BOOL:${CP2K_USE_SIRIUS}>:sirius::sirius>
     $<$<BOOL:${CP2K_USE_VORI}>:cp2k::VORI::vori>
+    $<$<BOOL:${CP2K_USE_MDI}>:cp2k::MDI::mdi>
     $<$<BOOL:${CP2K_USE_PEXSI}>:cp2k::PEXSI::pexsi>
     $<$<BOOL:${CP2K_USE_PEXSI}>:cp2k::ptscotch::ptscotch>
     $<$<BOOL:${CP2K_USE_SPGLIB}>:Spglib::symspg>
