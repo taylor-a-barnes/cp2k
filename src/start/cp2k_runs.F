@@ -106,6 +106,7 @@ MODULE cp2k_runs
                                               m_walltime
    USE mc_run,                          ONLY: do_mon_car
    USE md_run,                          ONLY: qs_mol_dyn
+   USE mdi_engine,                      ONLY: mdi_listen
    USE message_passing,                 ONLY: mp_any_source,&
                                               mp_comm_type,&
                                               mp_para_env_release,&
@@ -327,6 +328,9 @@ CONTAINS
       END SELECT
       CALL section_vals_release(input_file)
 
+!!!!!!!!!!!!!!!!!!
+      CALL mdi_listen(new_env_id)
+!!!!!!!!!!!!!!!!!!
       SELECT CASE (globenv%run_type_id)
       CASE (pint_run)
          CALL do_pint_run(para_env, root_section, input_declaration, globenv)
