@@ -62,7 +62,9 @@ PROGRAM cp2k
                                               compiler_version
    USE kinds,                           ONLY: default_path_length
    USE machine,                         ONLY: default_output_unit
-   USE mdi_engine,                      ONLY: init_mdi, mdi_options
+   USE mdi_engine,                      ONLY: init_mdi,&
+                                              mdi_options,&
+                                              mdi_listen
 #include "../base/base_uses.f90"
 
    IMPLICIT NONE
@@ -381,6 +383,7 @@ PROGRAM cp2k
 
          IF (use_mdi) THEN
             CALL init_mdi()
+            CALL mdi_listen()
          END IF
 
          IF (shell_mode) THEN
