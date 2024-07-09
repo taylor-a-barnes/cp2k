@@ -13,11 +13,11 @@ ExternalProject_Add(mdi_build
   -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
   -Dlanguage=Fortran
   -Dlibtype=SHARED
-  -Dmpi=OFF
+  -Dmpi=${CP2K_USE_MPI}
   -Dpython_plugins=OFF
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
-  BUILD_BYPRODUCTS "<BINARY_DIR>/MDI_Library/libmdi.a"
+  BUILD_BYPRODUCTS "<BINARY_DIR>/MDI_Library/libmdi.so"
   )
 
 # where is the compiled library?

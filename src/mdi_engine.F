@@ -80,6 +80,10 @@ CONTAINS
 
    END SUBROUTINE init_mdi
 
+! **************************************************************************************************
+!> \brief Begin listening for commands from the driver
+!> \param env_id id of the force_env
+! **************************************************************************************************
    SUBROUTINE mdi_listen(env_id)
       CHARACTER(len=:), ALLOCATABLE :: command
       INTEGER, INTENT(IN)           :: env_id
@@ -107,6 +111,10 @@ CONTAINS
 
    END SUBROUTINE mdi_listen
 
+! **************************************************************************************************
+!> \brief Ensure that the energy and forces are up to date
+!> \param ...
+! **************************************************************************************************
    SUBROUTINE mdi_update_forces()
       IMPLICIT NONE
 
@@ -119,6 +127,12 @@ CONTAINS
 
    END SUBROUTINE mdi_update_forces
 
+! **************************************************************************************************
+!> \brief Execute an MDI command received from the driver
+!> \param command command received from the driver
+!> \param comm MDI communicator used to communicate with the driver
+!> \param class_obj dummy argument used as part of the MDI plugin system
+! **************************************************************************************************
    FUNCTION execute_command(command, comm, class_obj)
       IMPLICIT NONE
 
@@ -229,6 +243,5 @@ CONTAINS
 
       execute_command = 0
    END FUNCTION execute_command
-
 
 END MODULE mdi_engine

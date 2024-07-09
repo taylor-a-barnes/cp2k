@@ -290,7 +290,11 @@ PROGRAM cp2k
       command_line_error = .TRUE.
    END IF
 
-   CALL init_cp2k(init_mpi=.TRUE., ierr=ierr)
+   IF (use_mdi) THEN
+      CALL init_mdi()
+   END IF
+
+   CALL init_cp2k(init_mpi=.TRUE., ierr=ierr, use_mdi=use_mdi)
 
    IF (ierr == 0) THEN
       ! some first info concerning how to run CP2K
@@ -378,10 +382,6 @@ PROGRAM cp2k
                   WRITE (output_unit, "(A)") "         Please, check and correct it"
                END IF
             END IF
-         END IF
-
-         IF (use_mdi) THEN
-            CALL init_mdi()
          END IF
 
          IF (shell_mode) THEN
