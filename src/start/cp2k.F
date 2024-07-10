@@ -62,8 +62,8 @@ PROGRAM cp2k
                                               compiler_version
    USE kinds,                           ONLY: default_path_length
    USE machine,                         ONLY: default_output_unit
-   USE mdi_engine,                      ONLY: init_mdi,&
-                                              mdi_options
+   USE mdi_environment,                 ONLY: mdi_options,&
+                                              use_mdi
 #include "../base/base_uses.f90"
 
    IMPLICIT NONE
@@ -76,7 +76,7 @@ PROGRAM cp2k
    INTEGER                              :: output_unit, l, i, var_set_sep, inp_var_idx
    INTEGER                              :: ierr, i_arg
    LOGICAL                              :: check, usage, echo_input, command_line_error
-   LOGICAL                              :: run_it, force_run, has_input, xml, print_version, print_license, shell_mode, use_mdi
+   LOGICAL                              :: run_it, force_run, has_input, xml, print_version, print_license, shell_mode
    TYPE(section_type), POINTER          :: input_declaration
 
    NULLIFY (input_declaration)
@@ -290,11 +290,7 @@ PROGRAM cp2k
       command_line_error = .TRUE.
    END IF
 
-   IF (use_mdi) THEN
-      CALL init_mdi()
-   END IF
-
-   CALL init_cp2k(init_mpi=.TRUE., ierr=ierr, use_mdi=use_mdi)
+   CALL init_cp2k(init_mpi=.TRUE., ierr=ierr, init_mdi=use_mdi)
 
    IF (ierr == 0) THEN
       ! some first info concerning how to run CP2K

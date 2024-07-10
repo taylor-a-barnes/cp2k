@@ -107,6 +107,7 @@ MODULE cp2k_runs
    USE mc_run,                          ONLY: do_mon_car
    USE md_run,                          ONLY: qs_mol_dyn
    USE mdi_engine,                      ONLY: mdi_listen
+   USE mdi_environment,                 ONLY: use_mdi
    USE message_passing,                 ONLY: mp_any_source,&
                                               mp_comm_type,&
                                               mp_para_env_release,&
@@ -329,7 +330,9 @@ CONTAINS
       CALL section_vals_release(input_file)
 
 !!!!!!!!!!!!!!!!!!
-      CALL mdi_listen(new_env_id)
+      IF ( use_mdi ) THEN
+         CALL mdi_listen(new_env_id)
+      END IF
 !!!!!!!!!!!!!!!!!!
       SELECT CASE (globenv%run_type_id)
       CASE (pint_run)

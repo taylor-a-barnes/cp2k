@@ -13,18 +13,20 @@
 ! **************************************************************************************************
 MODULE mdi_engine
 
-   USE kinds,                           ONLY: default_path_length,&
-                                              dp
+   USE kinds,                           ONLY: dp
    USE machine,                         ONLY: default_output_unit
-   USE mdi,                             ONLY: MDI_Init,&
-                                              MDI_Accept_communicator,&
-                                              MDI_Recv,&
+   USE message_passing,                 ONLY: mp_para_env_type
+   USE mdi,                             ONLY: MDI_Recv,&
                                               MDI_Send,&
                                               MDI_Recv_command,&
                                               MDI_INT,&
                                               MDI_DOUBLE,&
                                               MDI_COMMAND_LENGTH
-   USE f77_interface,                   ONLY: calc_energy_force,&
+   USE mdi_environment,                 ONLY: mdi_comm,&
+                                              mdi_env_id,&
+                                              mdi_forces_current
+   USE f77_interface,                   ONLY: default_para_env,&
+                                              calc_energy_force,&
                                               get_cell,&
                                               get_energy,&
                                               get_natom,&
@@ -40,45 +42,12 @@ MODULE mdi_engine
    IMPLICIT NONE
    PRIVATE
 
-   PUBLIC :: init_mdi, mdi_listen
+   PUBLIC :: mdi_listen
 
-   LOGICAL, PUBLIC :: use_mdi
-   CHARACTER(LEN=default_path_length), PUBLIC :: mdi_options
-
-   LOGICAL, PRIVATE :: terminate_flag, mdi_forces_current
-   INTEGER, PRIVATE :: mdi_comm, mdi_env_id
-   REAL(KIND=dp), ALLOCATABLE :: mdi_coords_buffer(:)
+   LOGICAL, PRIVATE :: terminate_flag
+   REAL(KIND=dp), ALLOCATABLE, PRIVATE :: mdi_coords_buffer(:)
 
 CONTAINS
-
-! **************************************************************************************************
-!> \brief Perform initialization to run as an MDI engine
-!> \param ...
-! **************************************************************************************************
-   SUBROUTINE init_mdi()
-      INTEGER :: ierr
-
-      WRITE (default_output_unit, *) "AAA INITIALIZING MDI"      
-
-      CALL MDI_Init(mdi_options, ierr)
-      IF ( ierr .NE. 0 ) THEN
-         WRITE (default_output_unit, "(/,T2,A)") &
-            "ERROR: MDI_Init returned a non-zero error code"
-         STOP 1
-      END IF
-
-      WRITE (default_output_unit, *) "BBB INITIALIZING MDI"
-
-      CALL MDI_Accept_communicator(mdi_comm, ierr)
-      IF ( ierr .NE. 0 ) THEN
-         WRITE (default_output_unit, "(/,T2,A)") &
-            "ERROR: MDI_Accept_communicator returned a non-zero error code"
-         STOP 1
-      END IF
-
-      mdi_forces_current = .FALSE.
-
-   END SUBROUTINE init_mdi
 
 ! **************************************************************************************************
 !> \brief Begin listening for commands from the driver
@@ -99,7 +68,7 @@ CONTAINS
 
          ! Receive a command from the driver and broadcast it to all ranks
          CALL MDI_Recv_command(command, mdi_comm, ierr)
-         !CALL MPI_Bcast(command, MDI_COMMAND_LENGTH, MPI_CHAR, 0, world_comm, ierr)
+         CALL default_para_env%bcast(command, 0)
 
          ierr = execute_command(command, mdi_comm, class_obj)
 
@@ -199,6 +168,7 @@ CONTAINS
       CASE( ">CELL" )
          mdi_forces_current = .FALSE.
          CALL MDI_Recv(cell_vector, 9, MDI_DOUBLE, comm, ierr)
+         CALL default_para_env%bcast(cell_vector, 0)
          cell_tensor(1,1) = cell_vector(1)
          cell_tensor(1,2) = cell_vector(2)
          cell_tensor(1,3) = cell_vector(3)
@@ -217,10 +187,12 @@ CONTAINS
          mdi_forces_current = .FALSE.
          CALL get_nparticle(mdi_env_id, nparticles, ierr)
          CALL MDI_Recv(mdi_coords_buffer, 3 * nparticles, MDI_DOUBLE, comm, ierr)
+         CALL default_para_env%bcast(mdi_coords_buffer, 0)
          CALL set_pos(mdi_env_id, mdi_coords_buffer, 3 * nparticles, ierr)
       CASE( ">VELOCITIES" )
          CALL get_nparticle(mdi_env_id, nparticles, ierr)
          CALL MDI_Recv(mdi_coords_buffer, 3 * nparticles, MDI_DOUBLE, comm, ierr)
+         CALL default_para_env%bcast(mdi_coords_buffer, 0)
          CALL set_vel(mdi_env_id, mdi_coords_buffer, 3 * nparticles, ierr)
       CASE( "<STRESS" )
          CALL mdi_update_forces()

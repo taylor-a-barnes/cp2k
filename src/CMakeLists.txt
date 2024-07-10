@@ -340,6 +340,7 @@ list(
   maxwell_solver_interface.F
   mdctrl_types.F
   mdi_engine.F
+  mdi_environment.F
   metadynamics.F
   metadynamics_types.F
   metadynamics_utils.F

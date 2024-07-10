@@ -96,6 +96,7 @@ MODULE f77_interface
                                               m_chdir,&
                                               m_getcwd,&
                                               m_memory
+   USE mdi_environment,                 ONLY: initialize_mdi
    USE message_passing,                 ONLY: mp_comm_type,&
                                               mp_comm_world,&
                                               mp_para_env_release,&
@@ -211,10 +212,10 @@ CONTAINS
 !> \param ierr returns a number different from 0 if there was an error
 !> \author fawzi
 ! **************************************************************************************************
-   SUBROUTINE init_cp2k(init_mpi, ierr, use_mdi)
+   SUBROUTINE init_cp2k(init_mpi, ierr, init_mdi)
       LOGICAL, INTENT(in)                                :: init_mpi
       INTEGER, INTENT(out)                               :: ierr
-      LOGICAL, OPTIONAL, INTENT(in)                      :: use_mdi
+      LOGICAL, OPTIONAL, INTENT(in)                      :: init_mdi
 
       INTEGER                                            :: offload_device_count, unit_nr
       TYPE(cp_logger_type), POINTER                      :: logger
@@ -240,13 +241,12 @@ CONTAINS
          ALLOCATE (default_para_env)
          IF (init_mpi) THEN
             ! get the default system wide communicator
-            IF ( PRESENT(use_mdi) ) THEN
-               CALL mp_world_init(default_para_env, use_mdi=use_mdi)
-            ELSE
-               CALL mp_world_init(default_para_env)
-            END IF
+            CALL mp_world_init(default_para_env, init_mdi=init_mdi)
          ELSE
             default_para_env = mp_comm_world
+            IF ( PRESENT(init_mdi) .AND. init_mdi ) THEN
+               CALL initialize_mdi()
+            END IF
          END IF
 
          CALL string_table_allocate()

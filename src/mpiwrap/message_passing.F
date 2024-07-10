@@ -30,6 +30,7 @@ MODULE message_passing
    USE mp_perf_env, ONLY: add_perf, &
                           add_mp_perf_env, rm_mp_perf_env
    USE mdi, ONLY: MDI_MPI_get_world_comm
+   USE mdi_environment, ONLY: initialize_mdi
 
 #include "../base/base_uses.f90"
 
@@ -1111,15 +1112,15 @@ CONTAINS
 ! **************************************************************************************************
 !> \brief initializes the system default communicator
 !> \param mp_comm [output] : handle of the default communicator
-!> \param use_mdi [input] : optional flag to acquire MPI_COMM_WORLD from MDI
+!> \param init_mdi [input] : optional flag to acquire MPI_COMM_WORLD from MDI
 !> \par History
 !>      2.2004 created [Joost VandeVondele ]
 !> \note
 !>      should only be called once
 ! **************************************************************************************************
-      SUBROUTINE mp_world_init(mp_comm, use_mdi)
+      SUBROUTINE mp_world_init(mp_comm, init_mdi)
          CLASS(mp_comm_type), INTENT(OUT)                     :: mp_comm
-         LOGICAL, OPTIONAL                                    :: use_mdi
+         LOGICAL, OPTIONAL                                    :: init_mdi
          MPI_COMM_TYPE                            :: mdi_comm_world_handle
 #if defined(__parallel)
          INTEGER                                  :: ierr
@@ -1170,7 +1171,8 @@ CONTAINS
          IF (ierr /= 0) CALL mp_stop(ierr, "mpi_comm_set_errhandler @ mp_world_init")
 #endif
          debug_comm_count = 1
-         IF ( PRESENT( use_mdi ) .AND. use_mdi ) THEN
+         IF ( PRESENT( init_mdi ) .AND. init_mdi ) THEN
+            CALL initialize_mdi()
             CALL MDI_MPI_get_world_comm(mdi_comm_world_handle, ierr)
             mp_comm = mp_comm_type(mdi_comm_world_handle)
          ELSE
