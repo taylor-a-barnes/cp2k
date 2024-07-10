@@ -210,6 +210,7 @@ CONTAINS
 !>      other functions when using cp2k as library
 !> \param init_mpi if the mpi environment should be initialized
 !> \param ierr returns a number different from 0 if there was an error
+!> \param init_mdi optional flag for if the mdi environment should be initialized
 !> \author fawzi
 ! **************************************************************************************************
    SUBROUTINE init_cp2k(init_mpi, ierr, init_mdi)
@@ -317,11 +318,13 @@ CONTAINS
 !> \brief cleanup after you have finished using this interface
 !> \param finalize_mpi if the mpi environment should be finalized
 !> \param ierr returns a number different from 0 if there was an error
+!> \param finalize_mdi optional flag for if the mdi environment should be initialized
 !> \author fawzi
 ! **************************************************************************************************
-   SUBROUTINE finalize_cp2k(finalize_mpi, ierr)
+   SUBROUTINE finalize_cp2k(finalize_mpi, ierr, finalize_mdi)
       LOGICAL, INTENT(in)                                :: finalize_mpi
       INTEGER, INTENT(out)                               :: ierr
+      LOGICAL, OPTIONAL, INTENT(in)                      :: finalize_mdi
 
       INTEGER                                            :: ienv
 
@@ -357,7 +360,11 @@ CONTAINS
          CALL rm_mp_perf_env()
          CALL string_table_deallocate(0)
          IF (finalize_mpi) THEN
-            CALL mp_world_finalize()
+            IF ( PRESENT(finalize_mdi) ) THEN
+               CALL mp_world_finalize(finalize_mdi=finalize_mdi)
+            ELSE
+               CALL mp_world_finalize()
+            END IF
          END IF
       END IF
    END SUBROUTINE finalize_cp2k

@@ -395,7 +395,7 @@ PROGRAM cp2k
    END IF
 
    ! and the final cleanup
-   CALL finalize_cp2k(finalize_mpi=.TRUE., ierr=ierr)
+   CALL finalize_cp2k(finalize_mpi=.TRUE., ierr=ierr, finalize_mdi=use_mdi)
    DEALLOCATE (initial_variables)
    CPASSERT(ierr == 0)
 

@@ -1238,12 +1238,19 @@ CONTAINS
 !> \par History
 !>      2.2004 created [Joost VandeVondele]
 ! **************************************************************************************************
-      SUBROUTINE mp_world_finalize()
+      SUBROUTINE mp_world_finalize(finalize_mdi)
+         LOGICAL, OPTIONAL, INTENT(IN)            :: finalize_mdi
 
          CHARACTER(LEN=default_string_length) :: debug_comm_count_char
 #if defined(__parallel)
          INTEGER                                  :: ierr
-         CALL mpi_barrier(MPI_COMM_WORLD, ierr) ! call mpi directly to avoid 0 stack pointer
+         MPI_COMM_TYPE                            :: mdi_comm_world_handle
+         IF ( PRESENT(finalize_mdi) .AND. finalize_mdi ) THEN
+            CALL MDI_MPI_get_world_comm(mdi_comm_world_handle, ierr)
+            CALL mpi_barrier(mdi_comm_world_handle, ierr)
+         ELSE
+            CALL mpi_barrier(MPI_COMM_WORLD, ierr) ! call mpi directly to avoid 0 stack pointer
+         END IF
 #endif
          CALL rm_mp_perf_env()
 
