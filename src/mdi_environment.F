@@ -37,16 +37,12 @@ CONTAINS
    SUBROUTINE initialize_mdi()
       INTEGER :: ierr
 
-      WRITE (default_output_unit, *) "AAA INITIALIZING MDI"      
-
       CALL MDI_Init(mdi_options, ierr)
       IF ( ierr .NE. 0 ) THEN
          WRITE (default_output_unit, "(/,T2,A)") &
             "ERROR: MDI_Init returned a non-zero error code"
          STOP 1
       END IF
-
-      WRITE (default_output_unit, *) "BBB INITIALIZING MDI"
 
       CALL MDI_Accept_communicator(mdi_comm, ierr)
       IF ( ierr .NE. 0 ) THEN
