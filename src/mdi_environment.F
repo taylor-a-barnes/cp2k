@@ -17,7 +17,9 @@ MODULE mdi_environment
    USE machine,                         ONLY: default_output_unit
    USE mdi,                             ONLY: MDI_Init,&
                                               MDI_Accept_communicator,&
-                                              MDI_MPI_get_world_comm
+                                              MDI_MPI_get_world_comm,&
+                                              MDI_Register_node,&
+                                              MDI_Register_command
 
    IMPLICIT NONE
    PRIVATE
@@ -43,6 +45,20 @@ CONTAINS
             "ERROR: MDI_Init returned a non-zero error code"
          STOP 1
       END IF
+
+      CALL MDI_Register_node("@DEFAULT", ierr);
+      CALL MDI_Register_command("@DEFAULT", "EXIT", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<ENERGY", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<PE", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<NATOMS", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<NPARTICLES", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<FORCES", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<CELL", ierr);
+      CALL MDI_Register_command("@DEFAULT", ">CELL", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<COORDS", ierr);
+      CALL MDI_Register_command("@DEFAULT", ">COORDS", ierr);
+      CALL MDI_Register_command("@DEFAULT", ">VELOCITIES", ierr);
+      CALL MDI_Register_command("@DEFAULT", "<STRESS", ierr);
 
       CALL MDI_Accept_communicator(mdi_comm, ierr)
       IF ( ierr .NE. 0 ) THEN
